@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>PneumoVision AI | Login</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:'Poppins',sans-serif;
+}
+
+body{
+
+background:linear-gradient(135deg,#08111F,#10243D);
+
+height:100vh;
+
+display:flex;
+
+justify-content:center;
+
+align-items:center;
+
+overflow:hidden;
+
+}
+
+/* Background Glow */
+
+body::before{
+
+content:'';
+
+position:absolute;
+
+width:500px;
+
+height:500px;
+
+background:#2DFFB5;
+
+filter:blur(220px);
+
+opacity:.18;
+
+left:-120px;
+
+top:-120px;
+
+}
+
+body::after{
+
+content:'';
+
+position:absolute;
+
+width:400px;
+
+height:400px;
+
+background:#3ABEFF;
+
+filter:blur(220px);
+
+opacity:.18;
+
+right:-100px;
+
+bottom:-100px;
+
+}
+
+/* Login Card */
+
+.login{
+
+position:relative;
+
+z-index:2;
+
+width:430px;
+
+background:rgba(255,255,255,.06);
+
+backdrop-filter:blur(18px);
+
+border:1px solid rgba(255,255,255,.08);
+
+border-radius:25px;
+
+padding:40px;
+
+box-shadow:0 25px 60px rgba(0,0,0,.5);
+
+animation:fade .8s ease;
+
+}
+
+@keyframes fade{
+
+from{
+
+opacity:0;
+
+transform:translateY(40px);
+
+}
+
+to{
+
+opacity:1;
+
+transform:translateY(0);
+
+}
+
+}
+
+.logo{
+
+font-size:34px;
+
+text-align:center;
+
+font-weight:700;
+
+color:#3ABEFF;
+
+margin-bottom:10px;
+
+}
+
+.logo span{
+
+color:#2DFFB5;
+
+}
+
+.sub{
+
+text-align:center;
+
+color:#C9D5E3;
+
+margin-bottom:35px;
+
+}
+
+.input{
+
+margin-bottom:22px;
+
+}
+
+.input label{
+
+display:block;
+
+margin-bottom:8px;
+
+color:#DDE8F3;
+
+font-size:15px;
+
+}
+
+.input input{
+
+width:100%;
+
+padding:15px;
+
+border:none;
+
+outline:none;
+
+border-radius:12px;
+
+background:#13273E;
+
+color:white;
+
+font-size:15px;
+
+}
+
+.input input:focus{
+
+border:1px solid #2DFFB5;
+
+}
+
+button{
+
+width:100%;
+
+padding:16px;
+
+border:none;
+
+border-radius:40px;
+
+background:#2DFFB5;
+
+font-size:17px;
+
+font-weight:600;
+
+cursor:pointer;
+
+transition:.3s;
+
+}
+
+button:hover{
+
+background:#3ABEFF;
+
+color:white;
+
+transform:translateY(-3px);
+
+}
+
+.links{
+
+margin-top:25px;
+
+display:flex;
+
+justify-content:space-between;
+
+}
+
+.links a{
+
+color:#8CCFFF;
+
+text-decoration:none;
+
+font-size:14px;
+
+}
+
+.footer{
+
+margin-top:30px;
+
+text-align:center;
+
+font-size:13px;
+
+color:#A6B7C8;
+
+}
+
+@media(max-width:500px){
+
+.login{
+
+width:92%;
+
+padding:30px;
+
+}
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="login">
+
+<div class="logo">
+
+🫁 Pneumo<span>Vision</span>
+
+</div>
+
+<p class="sub">
+
+AI Powered Pneumonia Detection System
+
+</p>
+
+<div class="input">
+
+<label>Email Address</label>
+
+<input type="email" placeholder="doctor@hospital.com">
+
+</div>
+
+<div class="input">
+
+<label>Password</label>
+
+<input type="password" placeholder="••••••••">
+
+</div>
+<button onclick="window.location.href='http://127.0.0.1:5500/dashboard.html'">
+    Login
+
+</button>
+
+<div class="links">
+
+<a href="#">Forgot Password?</a>
+
+<a href="index.html">Back Home</a>
+
+</div>
+
+<div class="footer">
+
+© 2026 PneumoVision AI
+
+</div>
+
+</div>
+
+<script>
+
+function login(){
+
+window.location="dashboard.html";
+
+}
+
+</script>
+
+</body>
+
+</html>
