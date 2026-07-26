@@ -1,0 +1,7 @@
+venv/
+__pycache__/
+*.pyc
+pneumovision.db
+uploads/
+gradcam_outputs/
+reports/
