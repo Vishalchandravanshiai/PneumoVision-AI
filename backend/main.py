@@ -1,13 +1,13 @@
 """
 main.py
 -------
-Yeh FastAPI backend ka main entry point hai.
-Ye REST API endpoints deta hai jo HTML/JS frontend fetch() se call karega.
+This is the main entry point of the FastAPI backend.
+It exposes REST API endpoints that the HTML/JS frontend calls via fetch().
 
-Chalane ka command:
+Run command:
     uvicorn main:app --reload
 
-Phir API docs yaha dekh sakte ho (auto-generated, testing ke liye bahut useful):
+Then you can view the API docs here (auto-generated, very useful for testing):
     http://localhost:8000/docs
 """
 
@@ -25,7 +25,7 @@ from model_utils import predict_and_explain
 from gradcam_utils import save_image_array
 from report_utils import generate_report
 
-# ---- Folders jaha files save hongi ----
+# ---- Folders where files will be saved ----
 BASE_DIR = os.path.dirname(__file__)
 UPLOAD_DIR = os.path.join(BASE_DIR, "uploads")
 GRADCAM_DIR = os.path.join(BASE_DIR, "gradcam_outputs")
@@ -34,14 +34,14 @@ REPORT_DIR = os.path.join(BASE_DIR, "reports")
 for folder in [UPLOAD_DIR, GRADCAM_DIR, REPORT_DIR]:
     os.makedirs(folder, exist_ok=True)
 
-# ---- Database ready karo (server start hote hi) ----
+# ---- Prepare the database (runs once at server startup) ----
 init_db()
 
 app = FastAPI(title="PneumoVision AI - Backend API")
 
-# ---- CORS: HTML/JS frontend ko allow karne ke liye ----
-# Abhi ke liye "*" (sabko allow) rakha hai taaki demo/hackathon me dikkat na ho.
-# Production me isko apne frontend ke exact URL se replace kar dena.
+# ---- CORS: allow the HTML/JS frontend to call this API ----
+# Currently set to "*" (allow all) to avoid issues during demo/hackathon.
+# In production, replace this with your frontend's exact URL.
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -50,13 +50,13 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# ---- Static files serve karna (images ko browser me directly dikhane ke liye) ----
+# ---- Serve static files (so images can be shown directly in the browser) ----
 app.mount("/static/uploads", StaticFiles(directory=UPLOAD_DIR), name="uploads")
 app.mount("/static/gradcam", StaticFiles(directory=GRADCAM_DIR), name="gradcam")
 
 
 # ============================================================
-# 1. Health check - server chal raha hai ya nahi, test karne ke liye
+# 1. Health check - to test whether the server is running
 # ============================================================
 @app.get("/")
 def health_check():
@@ -64,19 +64,25 @@ def health_check():
 
 
 # ============================================================
-# 2. MAIN ENDPOINT - X-ray upload karke prediction lena
+# 2. MAIN ENDPOINT - upload an X-ray and get a prediction
 # ============================================================
 @app.post("/predict")
 async def predict_endpoint(
     file: UploadFile = File(...),
-    patient_name: str = Form(default="")
+    patient_name: str = Form(default=""),
+    patient_age: str = Form(default=""),
+    patient_gender: str = Form(default=""),
+    patient_id: str = Form(default=""),
+    doctor_name: str = Form(default=""),
+    hospital_name: str = Form(default="")
 ):
     """
-    Frontend yaha X-ray image bhejega (multipart/form-data).
+    The frontend sends the X-ray image here (multipart/form-data).
 
-    Request (frontend se):
+    Request (from frontend):
         file: image file
-        patient_name: (optional) text
+        patient_name, patient_age, patient_gender, patient_id,
+        doctor_name, hospital_name: (all optional) text fields
 
     Response (JSON):
         {
@@ -88,34 +94,39 @@ async def predict_endpoint(
             "report_download_url": "/download-report/5"
         }
     """
-    # ---- 1. File type check ----
+    # ---- 1. Check file type ----
     if not file.content_type.startswith("image/"):
-        raise HTTPException(status_code=400, detail="Sirf image files allowed hain (jpg/png).")
+        raise HTTPException(status_code=400, detail="Only image files are allowed (jpg/png).")
 
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S%f")
 
-    # ---- 2. Image save karo (disk pe - model isi path se padhega) ----
+    # ---- 2. Save the image to disk (the model will read it from this path) ----
     image = Image.open(file.file)
     image_filename = f"xray_{timestamp}.png"
     image_path = os.path.join(UPLOAD_DIR, image_filename)
     image.save(image_path)
 
-    # ---- 3. Model se prediction + Grad-CAM dono ek saath lo ----
+    # ---- 3. Get prediction + Grad-CAM from the model in one call ----
     try:
         result = predict_and_explain(image_path)
     except FileNotFoundError as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-    # ---- 4. Grad-CAM overlay image (numpy array) ko PNG save karo ----
+    # ---- 4. Save the Grad-CAM overlay image (numpy array) as a PNG ----
     gradcam_filename = f"gradcam_{timestamp}.png"
     gradcam_path = os.path.join(GRADCAM_DIR, gradcam_filename)
     save_image_array(result["overlay_image"], gradcam_path)
 
-    # ---- 5. PDF report banao ----
+    # ---- 5. Generate the PDF report ----
     report_filename = f"report_{timestamp}.pdf"
     report_path = os.path.join(REPORT_DIR, report_filename)
     generate_report(
         patient_name=patient_name,
+        patient_age=patient_age,
+        patient_gender=patient_gender,
+        patient_id=patient_id,
+        doctor_name=doctor_name,
+        hospital_name=hospital_name,
         prediction=result["label"],
         confidence=result["confidence"],
         original_image_path=image_path,
@@ -123,7 +134,7 @@ async def predict_endpoint(
         save_path=report_path
     )
 
-    # ---- 6. Database me save karo ----
+    # ---- 6. Save the record in the database ----
     scan_id = add_scan(
         patient_name=patient_name,
         image_path=image_path,
@@ -133,7 +144,7 @@ async def predict_endpoint(
         report_path=report_path
     )
 
-    # ---- 7. Frontend ko response bhejo ----
+    # ---- 7. Send the response back to the frontend ----
     return {
         "scan_id": scan_id,
         "prediction": result["label"],
@@ -145,16 +156,16 @@ async def predict_endpoint(
 
 
 # ============================================================
-# 3. History - saare purane scans ki list
+# 3. History - list of all past scans
 # ============================================================
 @app.get("/history")
 def history_endpoint():
     """
-    Response: list of scans, sabse naya sabse upar.
+    Response: list of scans, newest first.
     """
     scans = get_all_scans()
 
-    # File paths ko URLs me convert kar rahe hain taaki frontend directly use kar sake
+    # Convert file paths into URLs so the frontend can use them directly
     for scan in scans:
         scan["original_image_url"] = f"/static/uploads/{os.path.basename(scan['image_path'])}"
         if scan["gradcam_path"]:
@@ -165,13 +176,13 @@ def history_endpoint():
 
 
 # ============================================================
-# 4. Ek specific scan ki details
+# 4. Details of one specific scan
 # ============================================================
 @app.get("/scan/{scan_id}")
 def get_scan_endpoint(scan_id: int):
     scan = get_scan_by_id(scan_id)
     if not scan:
-        raise HTTPException(status_code=404, detail="Scan nahi mila.")
+        raise HTTPException(status_code=404, detail="Scan not found.")
 
     scan["original_image_url"] = f"/static/uploads/{os.path.basename(scan['image_path'])}"
     if scan["gradcam_path"]:
@@ -182,13 +193,13 @@ def get_scan_endpoint(scan_id: int):
 
 
 # ============================================================
-# 5. PDF Report download karna
+# 5. Download the PDF report
 # ============================================================
 @app.get("/download-report/{scan_id}")
 def download_report(scan_id: int):
     scan = get_scan_by_id(scan_id)
     if not scan or not scan["report_path"] or not os.path.exists(scan["report_path"]):
-        raise HTTPException(status_code=404, detail="Report nahi mili.")
+        raise HTTPException(status_code=404, detail="Report not found.")
 
     return FileResponse(
         path=scan["report_path"],
@@ -198,12 +209,12 @@ def download_report(scan_id: int):
 
 
 # ============================================================
-# 6. Scan delete karna (optional, agar zarurat pade)
+# 6. Delete a scan (optional, if needed)
 # ============================================================
 @app.delete("/scan/{scan_id}")
 def delete_scan_endpoint(scan_id: int):
     scan = get_scan_by_id(scan_id)
     if not scan:
-        raise HTTPException(status_code=404, detail="Scan nahi mila.")
+        raise HTTPException(status_code=404, detail="Scan not found.")
     delete_scan(scan_id)
-    return {"message": f"Scan #{scan_id} delete ho gaya."}
+    return {"message": f"Scan #{scan_id} deleted."}

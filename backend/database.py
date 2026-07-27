@@ -1,13 +1,13 @@
 """
 database.py
 ------------
-Yeh file SQLite database handle karti hai.
-Isme scans (predictions) ki history save hoti hai.
+This file handles the SQLite database.
+It stores the history of scans (predictions).
 
-Use kaise karein:
+Usage:
     from database import init_db, add_scan, get_all_scans
 
-    init_db()  # app start hote hi ek baar call karo
+    init_db()  # call once when the app starts
     scan_id = add_scan(patient_name="Ram", image_path="uploads/xray1.png",
                         prediction="Pneumonia", confidence=92.5)
     scans = get_all_scans()
@@ -17,21 +17,21 @@ import sqlite3
 import os
 from datetime import datetime
 
-# Database file yahin backend folder me banegi
+# The database file will be created right here in the backend folder
 DB_PATH = os.path.join(os.path.dirname(__file__), "pneumovision.db")
 
 
 def get_connection():
-    """Ek naya database connection deta hai."""
+    """Returns a new database connection."""
     conn = sqlite3.connect(DB_PATH, check_same_thread=False)
-    conn.row_factory = sqlite3.Row  # taaki result dict jaisa mile
+    conn.row_factory = sqlite3.Row  # so results come back as dict-like objects
     return conn
 
 
 def init_db():
     """
-    Database aur table banata hai (agar pehle se nahi hai to).
-    Isko app start hote hi ek baar call karo.
+    Creates the database and table (if they don't already exist).
+    Call this once when the app starts.
     """
     conn = get_connection()
     cursor = conn.cursor()
@@ -55,8 +55,8 @@ def init_db():
 def add_scan(patient_name, image_path, prediction, confidence,
              gradcam_path=None, report_path=None):
     """
-    Naya scan record database me save karta hai.
-    Return karta hai us scan ki id (scan_id).
+    Saves a new scan record in the database.
+    Returns the id of that scan (scan_id).
     """
     conn = get_connection()
     cursor = conn.cursor()
@@ -80,7 +80,7 @@ def add_scan(patient_name, image_path, prediction, confidence,
 
 
 def get_all_scans():
-    """Saare scans ki list deta hai, sabse naya sabse upar."""
+    """Returns the list of all scans, newest first."""
     conn = get_connection()
     cursor = conn.cursor()
     cursor.execute("SELECT * FROM scans ORDER BY created_at DESC")
@@ -90,7 +90,7 @@ def get_all_scans():
 
 
 def get_scan_by_id(scan_id):
-    """Ek specific scan ki details deta hai id se."""
+    """Returns the details of one specific scan by its id."""
     conn = get_connection()
     cursor = conn.cursor()
     cursor.execute("SELECT * FROM scans WHERE id = ?", (scan_id,))
@@ -100,7 +100,7 @@ def get_scan_by_id(scan_id):
 
 
 def delete_scan(scan_id):
-    """Ek scan record delete karta hai (agar zarurat pade)."""
+    """Deletes a scan record (if needed)."""
     conn = get_connection()
     cursor = conn.cursor()
     cursor.execute("DELETE FROM scans WHERE id = ?", (scan_id,))
@@ -108,7 +108,7 @@ def delete_scan(scan_id):
     conn.close()
 
 
-# Testing ke liye: agar ye file directly run karo to database ban jayegi
+# For testing: running this file directly will create the database
 if __name__ == "__main__":
     init_db()
-    print("Database aur table successfully ban gaye!")
+    print("Database and table created successfully!")

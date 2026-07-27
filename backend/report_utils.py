@@ -1,14 +1,19 @@
 """
 report_utils.py
 ----------------
-Yeh file downloadable PDF report banati hai - patient ka naam,
-prediction, confidence score, X-ray, aur Grad-CAM heatmap ke saath.
+This file generates a downloadable PDF report - patient details,
+prediction, confidence score, X-ray, and Grad-CAM heatmap.
 
-Use kaise karein:
+Usage:
     from report_utils import generate_report
 
     generate_report(
         patient_name="Ram Kumar",
+        patient_age="20",
+        patient_gender="Male",
+        patient_id="1002",
+        doctor_name="Dr. Sharma",
+        hospital_name="City Hospital",
         prediction="Pneumonia",
         confidence=92.5,
         original_image_path="uploads/xray1.png",
@@ -23,9 +28,11 @@ from fpdf import FPDF
 
 
 def generate_report(patient_name, prediction, confidence,
-                     original_image_path, gradcam_image_path, save_path):
+                     original_image_path, gradcam_image_path, save_path,
+                     patient_age=None, patient_gender=None, patient_id=None,
+                     doctor_name=None, hospital_name=None):
     """
-    PDF report banata hai aur save_path pe save karta hai.
+    Generates a PDF report and saves it at save_path.
     Return: save_path
     """
     pdf = FPDF()
@@ -39,6 +46,11 @@ def generate_report(patient_name, prediction, confidence,
     # ---- Patient info ----
     pdf.set_font("Arial", "", 12)
     pdf.cell(0, 8, f"Patient Name: {patient_name if patient_name else 'N/A'}", ln=True)
+    pdf.cell(0, 8, f"Age: {patient_age if patient_age else 'N/A'}", ln=True)
+    pdf.cell(0, 8, f"Gender: {patient_gender if patient_gender else 'N/A'}", ln=True)
+    pdf.cell(0, 8, f"Patient ID: {patient_id if patient_id else 'N/A'}", ln=True)
+    pdf.cell(0, 8, f"Doctor: {doctor_name if doctor_name else 'N/A'}", ln=True)
+    pdf.cell(0, 8, f"Hospital: {hospital_name if hospital_name else 'N/A'}", ln=True)
     pdf.cell(0, 8, f"Date: {datetime.now().strftime('%d-%m-%Y %H:%M')}", ln=True)
     pdf.ln(5)
 

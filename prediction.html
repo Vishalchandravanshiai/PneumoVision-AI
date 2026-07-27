@@ -80,6 +80,8 @@ Back
 
 </div>
 
+<div id="predictionContent">
+
 <!-- Images -->
 
 <div class="row">
@@ -94,7 +96,7 @@ Original Chest X-ray
 
 <div class="card-body text-center">
 
-<img src="assets/xray.png"
+<img id="originalXrayImg" src=""
 class="img-fluid rounded"
 style="height:320px; object-fit:contain;">
 
@@ -114,7 +116,7 @@ Grad-CAM Heatmap
 
 <div class="card-body text-center">
 
-<img src="assets/heatmap.png"
+<img id="gradcamImg" src=""
 class="img-fluid rounded"
 style="height:320px; object-fit:contain;">
 
@@ -144,8 +146,8 @@ AI Diagnosis
 
 <h5>Status</h5>
 
-<span class="badge bg-danger fs-6">
-Pneumonia Detected
+<span id="statusBadge" class="badge fs-6">
+Loading...
 </span>
 
 </div>
@@ -154,12 +156,12 @@ Pneumonia Detected
 
 <h5>Confidence</h5>
 
-96.8%
+<span id="confidenceValue">--</span>
 
 <div class="progress mt-2">
 
-<div class="progress-bar bg-success"
-style="width:96%">
+<div id="confidenceBar" class="progress-bar"
+style="width:0%">
 </div>
 
 </div>
@@ -170,17 +172,17 @@ style="width:96%">
 
 <h5>Severity</h5>
 
-<span class="badge bg-warning text-dark">
-Moderate
+<span class="badge bg-secondary text-white">
+Doctor Review Needed
 </span>
 
 </div>
 
 <div class="col-md-3">
 
-<h5>Scan Time</h5>
+<h5>Scan ID</h5>
 
-0.42 sec
+<span id="scanIdDisplay">--</span>
 
 </div>
 
@@ -238,7 +240,7 @@ Patient Information
 
 <strong>Name</strong>
 
-<p>Rahul Sharma</p>
+<p id="patientNameDisplay">--</p>
 
 </div>
 
@@ -246,7 +248,7 @@ Patient Information
 
 <strong>Age</strong>
 
-<p>42 Years</p>
+<p id="patientAgeDisplay">--</p>
 
 </div>
 
@@ -254,7 +256,7 @@ Patient Information
 
 <strong>Gender</strong>
 
-<p>Male</p>
+<p id="patientGenderDisplay">--</p>
 
 </div>
 
@@ -262,7 +264,7 @@ Patient Information
 
 <strong>Patient ID</strong>
 
-<p>PV1025</p>
+<p id="patientIdDisplay">--</p>
 
 </div>
 
@@ -270,7 +272,7 @@ Patient Information
 
 <strong>Hospital</strong>
 
-<p>AIIMS Delhi</p>
+<p id="hospitalDisplay">--</p>
 
 </div>
 
@@ -278,7 +280,7 @@ Patient Information
 
 <strong>Doctor</strong>
 
-<p>Dr. Sharma</p>
+<p id="doctorDisplay">--</p>
 
 </div>
 
@@ -292,7 +294,7 @@ Patient Information
 
 <div class="text-center mb-5">
 
-<a href="reports.html" class="btn btn-success btn-lg me-3">
+<a id="downloadReportBtn" href="#" class="btn btn-success btn-lg me-3">
 
 <i class="fa-solid fa-file-arrow-down"></i>
 
@@ -311,12 +313,16 @@ New Scan
 </div>
 
 </div>
+<!-- predictionContent ends here -->
+
+</div>
 
 </div>
 
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="js/dashboard.js"></script>
 
 </body>
 </html>

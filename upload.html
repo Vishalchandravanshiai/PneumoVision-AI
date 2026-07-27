@@ -132,17 +132,17 @@
 
                         <div class="mb-3">
                             <label>Name</label>
-                            <input type="text" class="form-control">
+                            <input type="text" class="form-control" id="patientName">
                         </div>
 
                         <div class="mb-3">
                             <label>Age</label>
-                            <input type="number" class="form-control">
+                            <input type="number" class="form-control" id="patientAge">
                         </div>
 
                         <div class="mb-3">
                             <label>Gender</label>
-                            <select class="form-select">
+                            <select class="form-select" id="patientGender">
                                 <option>Male</option>
                                 <option>Female</option>
                                 <option>Other</option>
@@ -151,20 +151,20 @@
 
                         <div class="mb-3">
                             <label>Patient ID</label>
-                            <input type="text" class="form-control">
+                            <input type="text" class="form-control" id="patientId">
                         </div>
 
                         <div class="mb-3">
                             <label>Doctor Name</label>
-                            <input type="text" class="form-control">
+                            <input type="text" class="form-control" id="doctorName">
                         </div>
 
                         <div class="mb-3">
                             <label>Hospital</label>
-                            <input type="text" class="form-control">
+                            <input type="text" class="form-control" id="hospitalName">
                         </div>
 
-                        <button class="btn btn-primary w-100 mt-3">
+                        <button class="btn btn-primary w-100 mt-3" id="analyzeBtn">
                             <i class="fa-solid fa-magnifying-glass"></i>
                             Analyze X-ray
                         </button>
@@ -201,6 +201,7 @@ imageInput.addEventListener("change", function(){
 </script>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="js/dashboard.js"></script>
 
 </body>
 </html>

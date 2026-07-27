@@ -1,11 +1,11 @@
 """
 gradcam_utils.py
 ----------------
-Grad-CAM ka actual calculation ab model_utils.py me hai (teammate ke
-predict.py se exact match karne ke liye). Yeh file sirf helper functions
-deti hai - numpy array (image) ko PNG file me save karna.
+The actual Grad-CAM calculation now lives in model_utils.py (to exactly
+match the teammate's predict.py). This file just provides helper functions -
+saving a numpy array (image) to a PNG file.
 
-Use kaise karein:
+Usage:
     from gradcam_utils import save_image_array
     save_image_array(result["overlay_image"], "gradcam_outputs/xyz.png")
 """
@@ -16,13 +16,13 @@ import base64
 
 def save_image_array(img_array, save_path: str):
     """
-    Numpy array (OpenCV/BGR format) ko PNG file me save karta hai.
-    model_utils.predict_and_explain() se mile "original_image" ya
-    "overlay_image" arrays isi function se save karo.
+    Saves a numpy array (OpenCV/BGR format) as a PNG file.
+    Use this to save the "original_image" or "overlay_image" arrays
+    returned by model_utils.predict_and_explain().
 
     Parameter:
-        img_array: numpy array (jaise result["overlay_image"])
-        save_path: kaha save karna hai (jaise "gradcam_outputs/xyz.png")
+        img_array: numpy array (e.g. result["overlay_image"])
+        save_path: where to save it (e.g. "gradcam_outputs/xyz.png")
 
     Return: save_path
     """
@@ -32,14 +32,14 @@ def save_image_array(img_array, save_path: str):
 
 def image_array_to_base64(img_array) -> str:
     """
-    OPTIONAL helper: agar kabhi file save kiye bina seedha JSON response
-    me image bhejni ho (base64 string ke roop me), to ye function use karo.
-    Normal flow me iski zarurat nahi - hum PNG file save karke URL bhejte hain.
+    OPTIONAL helper: use this if you ever need to send an image directly in
+    a JSON response (as a base64 string) without saving it to a file.
+    Not needed in the normal flow - we save a PNG file and send its URL.
 
-    Return: base64 encoded string (bina file save kiye)
+    Return: base64 encoded string (without saving to a file)
     """
     success, buffer = cv2.imencode(".png", img_array)
     if not success:
-        raise ValueError("Image ko encode nahi kar paya.")
+        raise ValueError("Could not encode the image.")
     base64_str = base64.b64encode(buffer).decode("utf-8")
     return f"data:image/png;base64,{base64_str}"
