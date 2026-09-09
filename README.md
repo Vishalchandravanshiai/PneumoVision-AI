@@ -194,7 +194,7 @@ pip install -r requirements.txt
 
 ```bash
 # Start the Flask server
-python app.py
+python main.py
 ```
 
 Then open `http://localhost:5000` in your browser, upload a chest X-ray, and view the prediction, confidence score, Grad-CAM heatmap, and downloadable report.
