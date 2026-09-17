@@ -29,7 +29,7 @@ from tensorflow.keras.preprocessing import image as keras_image
 # upar). Isliye path "../models/best_model.keras" rakha hai.
 # Agar aap model ko backend/model/ folder ke andar copy kar rahe ho, to
 # neeche wali line uncomment/change kar dena.
-MODEL_PATH = os.path.join(os.path.dirname(__file__), "..", "models", "best_model.keras")
+MODEL_PATH = os.path.join(os.path.dirname(__file__), "..", "ai", "models", "best_model.keras")
 # MODEL_PATH = os.path.join(os.path.dirname(__file__), "model", "best_model.keras")
 
 LAST_CONV_LAYER = "conv5_block16_concat"
