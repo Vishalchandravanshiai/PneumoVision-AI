@@ -1,8 +1,7 @@
 """
 main.py
 -------
-This is the main entry point of the FastAPI backend.
-It exposes REST API endpoints that the HTML/JS frontend calls via fetch().
+
 
 Run command:
     uvicorn main:app --reload
