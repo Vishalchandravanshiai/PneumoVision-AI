@@ -4,7 +4,7 @@ main.py
 
 
 Run command:
-     python -muvicorn main:app --reload
+     python -m uvicorn main:app --reload
 
 Then you can view the API docs here (auto-generated, very useful for testing):
     http://localhost:8000/docs
