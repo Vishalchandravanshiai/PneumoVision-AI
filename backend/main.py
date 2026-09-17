@@ -4,7 +4,7 @@ main.py
 
 
 Run command:
-    uvicorn main:app --reload
+     python -muvicorn main:app --reload
 
 Then you can view the API docs here (auto-generated, very useful for testing):
     http://localhost:8000/docs
@@ -26,6 +26,10 @@ from report_utils import generate_report
 
 # ---- Folders where files will be saved ----
 BASE_DIR = os.path.dirname(__file__)
+
+# Frontend directory
+FRONTEND_DIR = os.path.join(BASE_DIR, "..", "frontend")
+
 UPLOAD_DIR = os.path.join(BASE_DIR, "uploads")
 GRADCAM_DIR = os.path.join(BASE_DIR, "gradcam_outputs")
 REPORT_DIR = os.path.join(BASE_DIR, "reports")
@@ -57,9 +61,6 @@ app.mount("/static/gradcam", StaticFiles(directory=GRADCAM_DIR), name="gradcam")
 # ============================================================
 # 1. Health check - to test whether the server is running
 # ============================================================
-@app.get("/")
-def health_check():
-    return {"status": "PneumoVision AI backend is running!"}
 
 
 # ============================================================
@@ -217,3 +218,5 @@ def delete_scan_endpoint(scan_id: int):
         raise HTTPException(status_code=404, detail="Scan not found.")
     delete_scan(scan_id)
     return {"message": f"Scan #{scan_id} deleted."}
+
+app.mount("/", StaticFiles(directory=FRONTEND_DIR, html=True), name="frontend")
